@@ -1,0 +1,5 @@
+Diagramy:
+1. https://www.mermaidchart.com/raw/89eb2629-5180-47e2-8ac7-897e42645dad?theme=light&version=v0.1&format=svg
+2. https://www.mermaidchart.com/raw/939e131e-2eb1-41f6-84d4-db73e92d4fa9?theme=light&version=v0.1&format=svg
+3. https://www.mermaidchart.com/raw/b3b8a8cb-4f10-461f-b565-95b619869824?theme=light&version=v0.1&format=svg
+4. https://www.mermaidchart.com/raw/b87e5d6b-5c29-42da-8afa-96905da651e2?theme=light&version=v0.1&format=svg
