@@ -1,4 +1,3 @@
-
 package com.example.fiszingsymulatjon;
 
 public class Plansza {
@@ -20,8 +19,34 @@ public class Plansza {
         for (int x = 0; x < szerokosc; x++) {
             for (int y = 0; y < wysokosc; y++) {
                 if (siatka[x][y] != null) {
-                    siatka[x][y].zyj();
+                    Organizm organizm = siatka[x][y];
+                    int staraX = organizm.getX();
+                    int staraY = organizm.getY();
+                    
+                    // Usuwamy organizm z obecnej pozycji
+                    siatka[x][y] = null;
+                    
+                    // Wykonujemy ruch
+                    organizm.zyj();
+                    
+                    // Sprawdzamy granice i korygujemy pozycję
+                    int nowaX = Math.min(Math.max(organizm.getX(), 0), szerokosc - 1);
+                    int nowaY = Math.min(Math.max(organizm.getY(), 0), wysokosc - 1);
+                    organizm.setX(nowaX);
+                    organizm.setY(nowaY);
+                    
+                    // Jeśli nowa pozycja jest zajęta, wracamy na starą
+                    if (siatka[nowaX][nowaY] != null) {
+                        organizm.setX(staraX);
+                        organizm.setY(staraY);
+                        nowaX = staraX;
+                        nowaY = staraY;
+                    }
+                    
+                    // Umieszczamy organizm na nowej pozycji
+                    siatka[nowaX][nowaY] = organizm;
                 }
+                
                 if (siatkaPlanktonow[x][y] != null) {
                     siatkaPlanktonow[x][y].prad();
                 }

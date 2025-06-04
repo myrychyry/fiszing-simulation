@@ -24,7 +24,7 @@ public class SymulacjaOceanu extends Application {
     private final Label etykietaDnia = new Label("Dzień: 0");
     private Plansza plansza;
     private Canvas plotno;
-    private static final int ROZMIAR_KOMORKI = 20;
+    private static final int ROZMIAR_KOMORKI = 60;
     private int rozmiarSiatki;         //
 
     @Override
