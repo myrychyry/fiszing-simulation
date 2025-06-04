@@ -25,13 +25,37 @@ public class Ryba extends Organizm {
 
     @Override
     public void przemieszczaj() {
-        // Losowy ruch o 1 kratkę: góra, dół, lewo lub prawo
-        int kierunek = (int)(Math.random() * 4);
+        // Losowy ruch o 1 kratkę w dowolnym kierunku (włącznie ze skosem)
+        int kierunek = (int)(Math.random() * 8);
         switch (kierunek) {
-            case 0 -> setY(getY() - 1); // góra
-            case 1 -> setY(getY() + 1); // dół
-            case 2 -> setX(getX() - 1); // lewo
-            case 3 -> setX(getX() + 1); // prawo
+            case 0 -> { // góra
+                setY(getY() - 1);
+            }
+            case 1 -> { // góra-prawo
+                setY(getY() - 1);
+                setX(getX() + 1);
+            }
+            case 2 -> { // prawo
+                setX(getX() + 1);
+            }
+            case 3 -> { // dół-prawo
+                setY(getY() + 1);
+                setX(getX() + 1);
+            }
+            case 4 -> { // dół
+                setY(getY() + 1);
+            }
+            case 5 -> { // dół-lewo
+                setY(getY() + 1);
+                setX(getX() - 1);
+            }
+            case 6 -> { // lewo
+                setX(getX() - 1);
+            }
+            case 7 -> { // góra-lewo
+                setY(getY() - 1);
+                setX(getX() - 1);
+            }
         }
     }
 

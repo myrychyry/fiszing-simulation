@@ -1,4 +1,3 @@
-
 package com.example.fiszingsymulatjon;
 
 public class Rekin extends Organizm {
@@ -18,8 +17,38 @@ public class Rekin extends Organizm {
 
     @Override
     public void przemieszczaj() {
-        setX(getX() + (int)(Math.random() * 5) - 2);
-        setY(getY() + (int)(Math.random() * 5) - 2);
+        // Losowy ruch o 1 kratkę w dowolnym kierunku (włącznie ze skosem)
+        int kierunek = (int)(Math.random() * 8);
+        switch (kierunek) {
+            case 0 -> { // góra
+                setY(getY() - 1);
+            }
+            case 1 -> { // góra-prawo
+                setY(getY() - 1);
+                setX(getX() + 1);
+            }
+            case 2 -> { // prawo
+                setX(getX() + 1);
+            }
+            case 3 -> { // dół-prawo
+                setY(getY() + 1);
+                setX(getX() + 1);
+            }
+            case 4 -> { // dół
+                setY(getY() + 1);
+            }
+            case 5 -> { // dół-lewo
+                setY(getY() + 1);
+                setX(getX() - 1);
+            }
+            case 6 -> { // lewo
+                setX(getX() - 1);
+            }
+            case 7 -> { // góra-lewo
+                setY(getY() - 1);
+                setX(getX() - 1);
+            }
+        }
     }
 
     @Override
