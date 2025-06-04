@@ -60,6 +60,7 @@ public class Rekin extends Organizm {
         setGlod(getGlod() - 2);
     }
 
+
     // Gettery i settery
     public int getIloscZebow() { return iloscZebow; }
     public void setIloscZebow(int iloscZebow) { this.iloscZebow = iloscZebow; }

@@ -35,6 +35,17 @@ public class Plansza {
                     organizm.setX(nowaX);
                     organizm.setY(nowaY);
                     
+                    // Sprawdzamy czy na nowej pozycji jest ryba (jeśli organizm to rekin)
+                    if (organizm instanceof Rekin && ((Rekin) organizm).isCzyPoluje()) {
+                        if (siatka[nowaX][nowaY] instanceof Ryba) {
+                            // Rekin zjada rybę
+                            ((Rekin) organizm).setGlod(100); // Rekin się najada
+                            siatka[nowaX][nowaY] = null; // Usuwamy rybę
+                            siatka[nowaX][nowaY] = organizm; // Rekin zajmuje miejsce ryby
+                            continue; // Przechodzimy do następnej iteracji
+                        }
+                    }
+                    
                     // Jeśli nowa pozycja jest zajęta, wracamy na starą
                     if (siatka[nowaX][nowaY] != null) {
                         organizm.setX(staraX);

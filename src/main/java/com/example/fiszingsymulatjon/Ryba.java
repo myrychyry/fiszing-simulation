@@ -43,7 +43,7 @@ public class Ryba extends Organizm {
                 setX(getX() + 1);
             }
             case 4 -> { // dół
-                setY(getY() + 1);
+                setY(getY() + 1);//somzioany
             }
             case 5 -> { // dół-lewo
                 setY(getY() + 1);
