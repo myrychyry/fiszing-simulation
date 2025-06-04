@@ -1,4 +1,3 @@
-
 package com.example.fiszingsymulatjon;
 
 public class Plankton {
@@ -11,8 +10,17 @@ public class Plankton {
     }
 
     public void prad() {
-        x += (int)(Math.random() * 3) - 1;
-        y += (int)(Math.random() * 3) - 1;
+        // 3% szans na ruch
+        if (Math.random() < 0.03) {
+            // Losowy kierunek ruchu (góra, dół, lewo, prawo)
+            int kierunek = (int)(Math.random() * 4);
+            switch (kierunek) {
+                case 0 -> y--; // góra
+                case 1 -> y++; // dół
+                case 2 -> x--; // lewo
+                case 3 -> x++; // prawo
+            }
+        }
     }
 
     // Gettery i settery
