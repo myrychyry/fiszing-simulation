@@ -3,17 +3,30 @@ package com.example.fiszingsymulatjon;
 public class Rekin extends Organizm {
     private int iloscZebow;
     private boolean czyPoluje;
+    private int licznikDni;
+    private static final int MAX_GLOD = 100;
+    private static final int PROG_POLOWANIA = 75;
+    private static final double SZANSA_UTRATY_ZEBA = 0.4; // 40% szans
 
     public Rekin(int x, int y, int glod, int iloscZebow, boolean czyPoluje) {
         super(x, y);
-        this.setGlod(glod);
+        this.setGlod(Math.min(glod, MAX_GLOD));
         this.iloscZebow = iloscZebow;
-        this.czyPoluje = czyPoluje;
+        this.czyPoluje = glod < PROG_POLOWANIA;
+        this.licznikDni = 0;
     }
 
-    public void poluj() {
-        // Implementacja
+    public void zjedzRybe() {
+        setGlod(MAX_GLOD);
+        if (Math.random() < SZANSA_UTRATY_ZEBA && iloscZebow > 0) {
+            iloscZebow--;
+        }
     }
+
+    public boolean czyMartwy() {
+        return getGlod() <= 0;
+    }
+
 
     @Override
     public void przemieszczaj() {
@@ -53,13 +66,31 @@ public class Rekin extends Organizm {
 
     @Override
     public void zyj() {
+        if (czyMartwy()) return;
         przemieszczaj();
-        if (czyPoluje) {
-            poluj();
+        licznikDni++;
+        
+        // Co 5 dni zmniejszamy głód o 2
+        if (licznikDni >= 5) {
+            setGlod(Math.max(0, getGlod() - 2));
+            licznikDni = 0;
+            aktualizujStatusPolowania();
         }
-        setGlod(getGlod() - 2);
     }
 
+    @Override
+    public void setGlod(int glod) {
+        super.setGlod(Math.min(Math.max(0, glod), MAX_GLOD));
+        aktualizujStatusPolowania();
+    }
+
+    private void aktualizujStatusPolowania() {
+        setCzyPoluje(getGlod() < PROG_POLOWANIA);
+    }
+
+    public void poluj() {
+        // Ta metoda jest pusta, ponieważ logika polowania jest w klasie Plansza
+    }
 
     // Gettery i settery
     public int getIloscZebow() { return iloscZebow; }

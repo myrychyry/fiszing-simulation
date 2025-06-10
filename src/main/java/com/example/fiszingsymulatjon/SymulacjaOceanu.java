@@ -104,7 +104,7 @@ public class SymulacjaOceanu extends Application {
         oknoKonfiguracji.show();
     }
 
-    private void rozpocznijSymulacje(int szerokosc, int wysokosc, int liczbaRyb, int liczbaRekinow) {  // zamiast startSimulation
+    private void rozpocznijSymulacje(int szerokosc, int wysokosc, int liczbaRyb, int liczbaRekinow) {
         this.rozmiarSiatki = Math.max(szerokosc, wysokosc);
         int canvasSize = rozmiarSiatki * ROZMIAR_KOMORKI;
 
@@ -133,11 +133,11 @@ public class SymulacjaOceanu extends Application {
         rysujObiekty(plotno.getGraphicsContext2D());
     }
 
-    private HBox stworzMenuKontroli(GraphicsContext gc) {  // zamiast createControlMenu
-        Button przyciskNastepnegoDnia = new Button("Kolejny dzień");  // zamiast nextDayButton
-        TextField poleLiczbyDni = new TextField();  // zamiast daysInput
-        Button przyciskPotwierdz = new Button("Przeskocz");  // zamiast confirmButton
-        Button przyciskStartStop = new Button("Start");  // zamiast startStopButton
+    private HBox stworzMenuKontroli(GraphicsContext gc) {
+        Button przyciskNastepnegoDnia = new Button("Kolejny dzień");
+        TextField poleLiczbyDni = new TextField();
+        Button przyciskPotwierdz = new Button("Przeskocz");
+        Button przyciskStartStop = new Button("Start");
         
         przyciskNastepnegoDnia.setOnAction(e -> nastepnyDzien(gc));
 
@@ -177,7 +177,7 @@ public class SymulacjaOceanu extends Application {
         return menu;
     }
 
-    private void nastepnyDzien(GraphicsContext gc) {  // zamiast nextDay
+    private void nastepnyDzien(GraphicsContext gc) {
         aktualnyDzien++;
         aktualizujWyswietlanieDnia();
         plansza.aktualizuj();
@@ -185,9 +185,9 @@ public class SymulacjaOceanu extends Application {
         rysujObiekty(gc);
     }
 
-    private void inicjalizujObiekty(int liczbaRyb, int liczbaRekinow) {  // zamiast initializeObjects
-        plansza.dodajObiekty(liczbaRyb, () -> new Ryba(0, 0, "niebieski", 100, 50));
-        plansza.dodajObiekty(liczbaRekinow, () -> new Rekin(0, 0, 100, 50, true));
+    private void inicjalizujObiekty(int liczbaRyb, int liczbaRekinow) {
+        plansza.dodajObiekty(liczbaRyb, () -> new Ryba(0, 0, "niebieski", 20, 50));
+        plansza.dodajObiekty(liczbaRekinow, () -> new Rekin(0, 0, 100, 50, false));
 
         for (int i = 0; i < plansza.getSzerokosc(); i++) {
             for (int j = 0; j < plansza.getWysokosc(); j++) {

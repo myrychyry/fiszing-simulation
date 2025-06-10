@@ -16,37 +16,46 @@ public class Plansza {
     }
 
     public void aktualizuj() {
-        // Tworzymy tymczasową tablicę na nowe pozycje planktonu
-        Plankton[][] nowePozyejePlanktonu = new Plankton[szerokosc][wysokosc];
-        
-        // Najpierw aktualizujemy pozycje planktonu
-        for (int x = 0; x < szerokosc; x++) {
-            for (int y = 0; y < wysokosc; y++) {
-                if (siatkaPlanktonow[x][y] != null) {
-                    Plankton plankton = siatkaPlanktonow[x][y];
-                    int staraX = plankton.getX();
-                    int staraY = plankton.getY();
-                    
-                    // Wykonujemy ruch planktonu
-                    plankton.prad();
-                    
-                    // Sprawdzamy granice i korygujemy pozycję
-                    int nowaX = Math.min(Math.max(plankton.getX(), 0), szerokosc - 1);
-                    int nowaY = Math.min(Math.max(plankton.getY(), 0), wysokosc - 1);
-                    plankton.setX(nowaX);
-                    plankton.setY(nowaY);
-                    
-                    // Jeśli nowa pozycja jest już zajęta przez inny plankton, zostajemy na starej pozycji
-                    if (nowePozyejePlanktonu[nowaX][nowaY] != null) {
-                        plankton.setX(staraX);
-                        plankton.setY(staraY);
-                        nowePozyejePlanktonu[staraX][staraY] = plankton;
-                    } else {
-                        nowePozyejePlanktonu[nowaX][nowaY] = plankton;
-                    }
+    // Dodawanie nowego planktonu z 1% szansą na pustych polach
+    for (int x = 0; x < szerokosc; x++) {
+        for (int y = 0; y < wysokosc; y++) {
+            if (siatkaPlanktonow[x][y] == null && Math.random() < 0.001) {
+                siatkaPlanktonow[x][y] = new Plankton(x, y);
+            }
+        }
+    }
+
+    // Tworzymy tymczasową tablicę na nowe pozycje planktonu
+    Plankton[][] nowePozyejePlanktonu = new Plankton[szerokosc][wysokosc];
+    
+    // Najpierw aktualizujemy pozycje planktonu
+    for (int x = 0; x < szerokosc; x++) {
+        for (int y = 0; y < wysokosc; y++) {
+            if (siatkaPlanktonow[x][y] != null) {
+                Plankton plankton = siatkaPlanktonow[x][y];
+                int staraX = plankton.getX();
+                int staraY = plankton.getY();
+                
+                // Wykonujemy ruch planktonu
+                plankton.prad();
+                
+                // Sprawdzamy granice i korygujemy pozycję
+                int nowaX = Math.min(Math.max(plankton.getX(), 0), szerokosc - 1);
+                int nowaY = Math.min(Math.max(plankton.getY(), 0), wysokosc - 1);
+                plankton.setX(nowaX);
+                plankton.setY(nowaY);
+                
+                // Jeśli nowa pozycja jest już zajęta przez inny plankton, zostajemy na starej pozycji
+                if (nowePozyejePlanktonu[nowaX][nowaY] != null) {
+                    plankton.setX(staraX);
+                    plankton.setY(staraY);
+                    nowePozyejePlanktonu[staraX][staraY] = plankton;
+                } else {
+                    nowePozyejePlanktonu[nowaX][nowaY] = plankton;
                 }
             }
         }
+    }
         
         // Aktualizujemy główną siatkę planktonu
         for (int x = 0; x < szerokosc; x++) {
@@ -80,8 +89,35 @@ public class Plansza {
                         if (siatkaPlanktonow[nowaX][nowaY] != null) {
                             // Ryba zjada plankton
                             Ryba ryba = (Ryba) organizm;
-                            ryba.setGlod(Math.min(ryba.getGlod() + 20, 100)); // Zwiększamy poziom najedzenia ryby
+                            ryba.zjedzPlankton(); // Używamy nowej metody
                             siatkaPlanktonow[nowaX][nowaY] = null; // Usuwamy plankton
+
+                            // Sprawdzamy czy ryba się rozmnoży
+                            if (ryba.sprobujRozmnozycSie()) {
+                                // Szukamy wolnego miejsca wokół ryby na potomstwo
+                                int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
+                                int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1};
+                                
+                                for (int i = 0; i < 8; i++) {
+                                    int noweX = nowaX + dx[i];
+                                    int noweY = nowaY + dy[i];
+                                    
+                                    // Sprawdzamy czy pozycja jest w granicach planszy
+                                    if (noweX >= 0 && noweX < szerokosc && 
+                                        noweY >= 0 && noweY < wysokosc && 
+                                        siatka[noweX][noweY] == null) {
+                                        // Tworzymy nową rybę na wolnym miejscu
+                                        Ryba potomstwo = ryba.stworzPotomstwo(noweX, noweY);
+                                        siatka[noweX][noweY] = potomstwo;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Sprawdzamy czy ryba nie umarła z głodu
+                        if (((Ryba) organizm).czyMartwa()) {
+                            continue; // Pomijamy dodawanie martwej ryby do nowej pozycji
                         }
                     }
                     
@@ -100,7 +136,7 @@ public class Plansza {
                             }
                             
                             if (czyMoznaZjesc) {
-                                ((Rekin) organizm).setGlod(100);
+                                ((Rekin) organizm).zjedzRybe();
                                 siatka[nowaX][nowaY] = null;
                                 siatka[nowaX][nowaY] = organizm;
                                 continue;
@@ -110,6 +146,12 @@ public class Plansza {
                                 nowaX = staraX;
                                 nowaY = staraY;
                             }
+                        }
+                    }
+                    // Sprawdzamy czy rekin nie umarł z głodu
+                    if (organizm instanceof Rekin) {
+                        if (((Rekin) organizm).czyMartwy()) {
+                            continue; // Pomijamy dodawanie martwego rekina do nowej pozycji
                         }
                     }
                     

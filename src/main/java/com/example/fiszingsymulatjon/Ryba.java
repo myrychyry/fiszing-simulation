@@ -3,6 +3,7 @@ package com.example.fiszingsymulatjon;
 public class Ryba extends Organizm {
     private int silaUcieczki;
     private String kolor;
+    private static final double SZANSA_ROZMNOZENIA = 0.049;
 
     public Ryba(int x, int y, String kolor, int glod, int silaUcieczki) {
         super(x, y);
@@ -10,6 +11,14 @@ public class Ryba extends Organizm {
         this.setGlod(glod);
         this.silaUcieczki = silaUcieczki;
     }
+    public boolean sprobujRozmnozycSie() {
+        return Math.random() < SZANSA_ROZMNOZENIA;
+    }
+
+    public Ryba stworzPotomstwo(int x, int y) {
+        return new Ryba(x, y, this.kolor, 20, 50);
+    }
+
 
     public void szukajPlanktonu() {
         // Implementacja
@@ -62,8 +71,22 @@ public class Ryba extends Organizm {
     @Override
     public void zyj() {
         przemieszczaj();
-        setGlod(getGlod() - 1);
+        // Zmniejszamy głód co 5 dni
+        if (getWiek() % 5 == 0) {
+            setGlod(getGlod() - 1);
+        }
+        // Zwiększamy wiek
+        setWiek(getWiek() + 1);
     }
+    public void zjedzPlankton() {
+        setGlod(Math.min(20, getGlod() + 5)); // Dodajemy 5 punktów głodu, ale nie więcej niż 20
+    }
+
+    public boolean czyMartwa() {
+        return getGlod() <= 0;
+    }
+
+
 
     // Gettery i settery
     public int getSilaUcieczki() { return silaUcieczki; }
