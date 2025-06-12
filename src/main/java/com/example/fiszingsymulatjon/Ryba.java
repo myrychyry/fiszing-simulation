@@ -40,14 +40,11 @@ public class Ryba extends Organizm {
     @Override
     public void zyj() {
         przemieszczaj();
-        // Zmniejszamy głód co 5 dni
         if (getWiek() % 5 == 0) {
             setGlod(getGlod() - 1);
         }
-        // Zwiększamy wiek
         setWiek(getWiek() + 1);
         //System.out.printf("wiek sie zwiekrzyl: " + getWiek() + "\n");
-        // Aktualizujemy siłę ucieczki po zmianie wieku i głodu
         aktualizujSileUcieczki();
     }
 
@@ -59,22 +56,9 @@ public class Ryba extends Organizm {
         return new Ryba(x, y, this.kolor, 20, 50);
     }
 
-        
-    public void szukajPlanktonu() {
-        // Implementacja
-    }
-        
-    public void unikajDrapieznikow() {
-        // Implementacja
-    }
-
-    public void szukajSchronienia() {
-        // Implementacja
-    }
-
     @Override
     public void przemieszczaj() {
-        // Losowy ruch o 1 kratkę w dowolnym kierunku (włącznie ze skosem)
+        // Losowy ruch o 1 kratkę w dowolnym kierunku
         int kierunek = (int)(Math.random() * 8);
         switch (kierunek) {
             case 0 -> { // góra
@@ -92,7 +76,7 @@ public class Ryba extends Organizm {
                 setX(getX() + 1);
             }
             case 4 -> { // dół
-                setY(getY() + 1);//somzioany
+                setY(getY() + 1);
             }
             case 5 -> { // dół-lewo
                 setY(getY() + 1);
@@ -109,14 +93,12 @@ public class Ryba extends Organizm {
     }
 
     public void zjedzPlankton() {
-        setGlod(Math.min(20, getGlod() + 5)); // Dodajemy 5 punktów głodu, ale nie więcej niż 20
+        setGlod(Math.min(20, getGlod() + 5));
     }
 
     public boolean czyMartwa() {
         return getGlod() <= 0;
     }
-
-
 
     // Gettery i settery
     public int getSilaUcieczki() { return silaUcieczki; }

@@ -18,7 +18,7 @@ import javafx.util.Duration;
 
 public class SymulacjaOceanu extends Application {
     private Stage oknoGlowne;
-    private int aktualnyDzien = 0;
+    private static int aktualnyDzien = 0;
     private boolean czyDziala = false;
     private Timeline czasomierz;
     private final Label etykietaDnia = new Label("Dzień: 0");
@@ -105,6 +105,8 @@ public class SymulacjaOceanu extends Application {
     }
 
     private void rozpocznijSymulacje(int szerokosc, int wysokosc, int liczbaRyb, int liczbaRekinow) {
+        RejestracjaZdarzen.inicjalizujPlik();
+
         this.rozmiarSiatki = Math.max(szerokosc, wysokosc);
         int canvasSize = rozmiarSiatki * ROZMIAR_KOMORKI;
 
@@ -125,7 +127,7 @@ public class SymulacjaOceanu extends Application {
         oknoGlowne.show();
 
         czasomierz = new Timeline(
-            new KeyFrame(Duration.seconds(1), event -> nastepnyDzien(plotno.getGraphicsContext2D()))
+                new KeyFrame(Duration.seconds(1), event -> nastepnyDzien(plotno.getGraphicsContext2D()))
         );
         czasomierz.setCycleCount(Timeline.INDEFINITE);
 
@@ -138,7 +140,7 @@ public class SymulacjaOceanu extends Application {
         TextField poleLiczbyDni = new TextField();
         Button przyciskPotwierdz = new Button("Przeskocz");
         Button przyciskStartStop = new Button("Start");
-        
+
         przyciskNastepnegoDnia.setOnAction(e -> nastepnyDzien(gc));
 
         przyciskPotwierdz.setOnAction(e -> {
@@ -147,6 +149,9 @@ public class SymulacjaOceanu extends Application {
                 if (days > 0) {
                     for (int i = 0; i < days; i++) {
                         nastepnyDzien(gc);
+                        if (plansza.czyBrakOrganizmow()) {
+                            break;
+                        }
                     }
                     poleLiczbyDni.clear();
                 } else {
@@ -181,14 +186,33 @@ public class SymulacjaOceanu extends Application {
         aktualnyDzien++;
         aktualizujWyswietlanieDnia();
         plansza.aktualizuj();
+
+        // Sprawdzanie czy pozostały jakieś organizmy
+        if (plansza.czyBrakOrganizmow()) {
+            RejestracjaZdarzen.zapiszZdarzenie(aktualnyDzien, "KONIEC SYMULACJI - wszystkie organizmy wymarły");
+            System.out.println("Wszystkie organizmy wymarły!");
+
+            if (czyDziala) {
+                czasomierz.stop();
+                czyDziala = false;
+            }
+
+            // Wyświetlenie komunikatu
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Koniec symulacji");
+            alert.setHeaderText(null);
+            alert.setContentText("Wszystkie organizmy wymarły w dniu " + aktualnyDzien + "!");
+            alert.show();
+        }
+
         rysujSiatke(gc);
         rysujObiekty(gc);
     }
 
     private void inicjalizujObiekty(int liczbaRyb, int liczbaRekinow) {
-        String[] kolory = {"niebieski", "zolty", "czerwony","fiolet"};
+        String[] kolory = {"niebieski", "zolty", "czerwony", "fiolet"};
         plansza.dodajObiekty(liczbaRyb, () -> {
-            String losowyKolor = kolory[(int)(Math.random() * kolory.length)];
+            String losowyKolor = kolory[(int) (Math.random() * kolory.length)];
             return new Ryba(0, 0, losowyKolor, 20, 5440);
         });
         plansza.dodajObiekty(liczbaRekinow, () -> new Rekin(0, 0, 100, 50, false));
@@ -255,17 +279,16 @@ public class SymulacjaOceanu extends Application {
                 if (organizmy[x][y] != null) {
                     if (organizmy[x][y] instanceof Rekin) {
                         gc.setFill(Color.GRAY);
-                        
+
                         double startX = x * ROZMIAR_KOMORKI;
                         double startY = y * ROZMIAR_KOMORKI;
-                        
-                        // Punkty trójkąta
-                        double[] xPoints = {startX + 2, startX + ROZMIAR_KOMORKI -2, startX + ROZMIAR_KOMORKI/2};
-                        
-                        double[] yPoints = {startY + 2, startY +2, startY + ROZMIAR_KOMORKI};
-                        
+
+                        double[] xPoints = {startX + 2, startX + ROZMIAR_KOMORKI - 2, startX + ROZMIAR_KOMORKI / 2};
+
+                        double[] yPoints = {startY + 2, startY + 2, startY + ROZMIAR_KOMORKI};
+
                         gc.fillPolygon(xPoints, yPoints, 3);
-                        
+
                         // Rysowanie paska głodu dla rekina
                         double poziomGlodu = organizmy[x][y].getGlod() / 100.0;
                         rysujPasekGlodu(gc, x, y, poziomGlodu);
@@ -279,7 +302,7 @@ public class SymulacjaOceanu extends Application {
                         }
                         gc.fillOval(x * ROZMIAR_KOMORKI + 5, y * ROZMIAR_KOMORKI + 5,
                                 ROZMIAR_KOMORKI - 10, ROZMIAR_KOMORKI - 10);
-                        
+
                         // Rysowanie paska głodu dla ryby
                         double poziomGlodu = ryba.getGlod() / 20.0; // Ryba ma max 20 głodu
                         rysujPasekGlodu(gc, x, y, poziomGlodu);
@@ -289,20 +312,24 @@ public class SymulacjaOceanu extends Application {
         }
     }
 
+    public static int getAktualnyDzien() {
+        return aktualnyDzien;
+    }
+
     private void rysujPasekGlodu(GraphicsContext gc, int x, int y, double poziomGlodu) {
-        int szerokoscPaska = (int)(ROZMIAR_KOMORKI * 0.7); // 80% szerokości komórki
-        int wysokoscPaska = 5; // 4 piksele wysokości
+        int szerokoscPaska = (int) (ROZMIAR_KOMORKI * 0.7);
+        int wysokoscPaska = 5;
         int margines = (ROZMIAR_KOMORKI - szerokoscPaska) / 2;
-        
-        // Pozycja paska (na górze organizmu)
+
+        // Pozycja paska
         int pasekX = x * ROZMIAR_KOMORKI + margines;
-        int pasekY = y * ROZMIAR_KOMORKI + (int)(ROZMIAR_KOMORKI * 0.35);
-        
-        // Rysowanie tła paska (szary)
+        int pasekY = y * ROZMIAR_KOMORKI + (int) (ROZMIAR_KOMORKI * 0.35);
+
+        // Rysowanie tła paska głodu
         gc.setFill(Color.INDIANRED);
         gc.fillRect(pasekX, pasekY, szerokoscPaska, wysokoscPaska);
-        
-        // Rysowanie aktualnego poziomu głodu (czarny)
+
+        // Rysowanie aktualnego poziomu głodu
         gc.setFill(Color.LIGHTGREEN);
         gc.fillRect(pasekX, pasekY, szerokoscPaska * poziomGlodu, wysokoscPaska);
     }

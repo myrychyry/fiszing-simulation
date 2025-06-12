@@ -21,6 +21,8 @@ public class Plansza {
         for (int y = 0; y < wysokosc; y++) {
             if (siatkaPlanktonow[x][y] == null && Math.random() < 0.001) {
                 siatkaPlanktonow[x][y] = new Plankton(x, y);
+                //RejestracjaZdarzen.zapiszZdarzenie(SymulacjaOceanu.getAktualnyDzien(), "powstał nowy plankton");
+
             }
         }
     }
@@ -74,8 +76,7 @@ public class Plansza {
                     
                     // Usuwamy organizm z obecnej pozycji
                     siatka[x][y] = null;
-                    
-                    // Wykonujemy ruch
+
                     organizm.zyj();
                     
                     // Sprawdzamy granice i korygujemy pozycję
@@ -91,6 +92,7 @@ public class Plansza {
                             Ryba ryba = (Ryba) organizm;
                             ryba.zjedzPlankton(); // Używamy nowej metody
                             siatkaPlanktonow[nowaX][nowaY] = null; // Usuwamy plankton
+                            //RejestracjaZdarzen.zapiszZdarzenie(SymulacjaOceanu.getAktualnyDzien(), "ryba zjadła plankton");
 
                             // Sprawdzamy czy ryba się rozmnoży
                             if (ryba.sprobujRozmnozycSie()) {
@@ -110,6 +112,7 @@ public class Plansza {
                                         Ryba potomstwo = ryba.stworzPotomstwo(noweX, noweY);
                                         siatka[noweX][noweY] = potomstwo;
                                         System.out.printf("Potomstwo powstało :o\n");
+                                        RejestracjaZdarzen.zapiszZdarzenie(SymulacjaOceanu.getAktualnyDzien(), "ryba się rozmnożyła");
                                         break;
                                     }
                                 }
@@ -119,6 +122,7 @@ public class Plansza {
                         // Sprawdzamy czy ryba nie umarła z głodu
                         if (((Ryba) organizm).czyMartwa()) {
                             System.out.printf("Ryba umarła z głodu :(\n");
+                            RejestracjaZdarzen.zapiszZdarzenie(SymulacjaOceanu.getAktualnyDzien(), "ryba umarła z głodu");
                             continue; // Pomijamy dodawanie martwej ryby do nowej pozycji
                         }
                     }
@@ -145,6 +149,7 @@ public class Plansza {
                                 czyMoznaZjesc = Math.random()*100 < szansaZjedzenia;
                                 if(!czyMoznaZjesc){
                                     System.out.printf("Ryba unikneła smierci :)" + "\n");
+                                    RejestracjaZdarzen.zapiszZdarzenie(SymulacjaOceanu.getAktualnyDzien(), "ryba uniknęła śmierci");
                                 }
                             } else {
 
@@ -152,11 +157,13 @@ public class Plansza {
 
                                 if(!czyMoznaZjesc){
                                     System.out.printf("Ryba unikneła smierci :)"+"\n" );
+                                    RejestracjaZdarzen.zapiszZdarzenie(SymulacjaOceanu.getAktualnyDzien(), "ryba uniknęła śmierci");
                                 }
                             }
                             
                             if (czyMoznaZjesc) {
                                 System.out.printf("Ryba została zjedzona :(" + "\n");
+                                RejestracjaZdarzen.zapiszZdarzenie(SymulacjaOceanu.getAktualnyDzien(), "rekin zjadł rybę");
                                 rekin.zjedzRybe();
                                 siatka[nowaX][nowaY] = null;
                                 siatka[nowaX][nowaY] = organizm;
@@ -173,6 +180,7 @@ public class Plansza {
                     if (organizm instanceof Rekin) {
                         if (((Rekin) organizm).czyMartwy()) {
                             System.out.printf("Rekin umarł z głodu :}\n");
+                            RejestracjaZdarzen.zapiszZdarzenie(SymulacjaOceanu.getAktualnyDzien(), "rekin umarł z głodu");
                             continue; // Pomijamy dodawanie martwego rekina do nowej pozycji
                         }
                     }
@@ -209,7 +217,16 @@ public class Plansza {
             }
         }
     }
-
+public boolean czyBrakOrganizmow() {
+    for (int x = 0; x < szerokosc; x++) {
+        for (int y = 0; y < wysokosc; y++) {
+            if (siatka[x][y] != null) {
+                return false; // Znaleziono przynajmniej jeden organizm
+            }
+        }
+    }
+    return true; // Nie znaleziono żadnego organizmu
+}
     // Gettery
     public int getSzerokosc() { return szerokosc; }
     public int getWysokosc() { return wysokosc; }

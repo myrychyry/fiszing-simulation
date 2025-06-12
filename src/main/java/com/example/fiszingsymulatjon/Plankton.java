@@ -11,7 +11,7 @@ public class Plankton {
 
     public void prad() {
         if (Math.random() < 0.03) {
-            // Losowy kierunek ruchu (góra, dół, lewo, prawo)
+            // Losowy kierunek ruchu
             int kierunek = (int)(Math.random() * 4);
             switch (kierunek) {
                 case 0 -> y--; // góra

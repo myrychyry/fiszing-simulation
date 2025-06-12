@@ -30,7 +30,7 @@ public class Rekin extends Organizm {
 
     @Override
     public void przemieszczaj() {
-        // Losowy ruch o 1 kratkę w dowolnym kierunku (włącznie ze skosem)
+        // Losowy ruch o 1 kratkę w dowolnym kierunku
         int kierunek = (int)(Math.random() * 8);
         switch (kierunek) {
             case 0 -> { // góra
