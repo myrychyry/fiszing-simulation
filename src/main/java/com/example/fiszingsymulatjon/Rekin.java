@@ -5,7 +5,7 @@ public class Rekin extends Organizm {
     private boolean czyPoluje;
     private int licznikDni;
     private static final int MAX_GLOD = 100;
-    private static final int PROG_POLOWANIA = 75;
+    private static final int PROG_POLOWANIA = 81;
     private static final double SZANSA_UTRATY_ZEBA = 0.4; // 40% szans
 
     public Rekin(int x, int y, int glod, int iloscZebow, boolean czyPoluje) {
@@ -17,7 +17,7 @@ public class Rekin extends Organizm {
     }
 
     public void zjedzRybe() {
-        setGlod(MAX_GLOD);
+        setGlod(getGlod()+20);
         if (Math.random() < SZANSA_UTRATY_ZEBA && iloscZebow > 0) {
             iloscZebow--;
         }
@@ -88,9 +88,6 @@ public class Rekin extends Organizm {
         setCzyPoluje(getGlod() < PROG_POLOWANIA);
     }
 
-    public void poluj() {
-        // Ta metoda jest pusta, ponieważ logika polowania jest w klasie Plansza
-    }
 
     // Gettery i settery
     public int getIloscZebow() { return iloscZebow; }

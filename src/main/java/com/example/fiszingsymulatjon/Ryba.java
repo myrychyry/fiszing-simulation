@@ -6,9 +6,9 @@ public class Ryba extends Organizm {
     private static final double SZANSA_ROZMNOZENIA = 0.06;
     private static final int MAX_SILA_UCIECZKI = 100;
     private static final int MAX_WIEK = 100;
-    private static final double WAGA_GLODU = 0.6;
-    private static final double WAGA_WIEKU = 0.4;
-
+    private static final double WAGA_GLODU = 0.5;
+    private static final double WAGA_WIEKU = 0.3;
+    private static final double WAGA_KOLORU = 0.2;
     public Ryba(int x, int y, String kolor, int glod, int silaUcieczki) {
         super(x, y);
         this.kolor = kolor;
@@ -23,8 +23,18 @@ public class Ryba extends Organizm {
         // Składowa wieku (im mniejszy wiek, tym większa siła ucieczki)
         double skladowaWieku = ((MAX_WIEK - getWiek()) / (double) MAX_WIEK) * WAGA_WIEKU * MAX_SILA_UCIECZKI;
         
+        // Składowa koloru
+        double skladowaKoloru = 0;
+        switch(getKolor()) {
+            case "niebieski" -> skladowaKoloru = 1 * WAGA_KOLORU * MAX_SILA_UCIECZKI;
+            case "zolty" -> skladowaKoloru = 0.8 * WAGA_KOLORU * MAX_SILA_UCIECZKI;
+            case "czerwony" -> skladowaKoloru = 0.6 * WAGA_KOLORU * MAX_SILA_UCIECZKI;
+            case "fiolet" -> skladowaKoloru = 0.4 * WAGA_KOLORU * MAX_SILA_UCIECZKI;
+        }
+
         // Całkowita siła ucieczki
-        this.silaUcieczki = (int) Math.min(MAX_SILA_UCIECZKI, Math.max(0, skladowaGlodu + skladowaWieku));
+        this.silaUcieczki = (int) Math.min(MAX_SILA_UCIECZKI, Math.max(0, skladowaGlodu + skladowaWieku + skladowaKoloru));
+        //System.out.printf("siema ucieczki: " + this.silaUcieczki + "\n");
     }
 
     @Override

@@ -186,7 +186,11 @@ public class SymulacjaOceanu extends Application {
     }
 
     private void inicjalizujObiekty(int liczbaRyb, int liczbaRekinow) {
-        plansza.dodajObiekty(liczbaRyb, () -> new Ryba(0, 0, "niebieski", 20, 50));
+        String[] kolory = {"niebieski", "zolty", "czerwony","fiolet"};
+        plansza.dodajObiekty(liczbaRyb, () -> {
+            String losowyKolor = kolory[(int)(Math.random() * kolory.length)];
+            return new Ryba(0, 0, losowyKolor, 20, 5440);
+        });
         plansza.dodajObiekty(liczbaRekinow, () -> new Rekin(0, 0, 100, 50, false));
 
         for (int i = 0; i < plansza.getSzerokosc(); i++) {
@@ -251,22 +255,30 @@ public class SymulacjaOceanu extends Application {
                 if (organizmy[x][y] != null) {
                     if (organizmy[x][y] instanceof Rekin) {
                         gc.setFill(Color.GRAY);
-                        gc.fillOval(x * ROZMIAR_KOMORKI, y * ROZMIAR_KOMORKI, ROZMIAR_KOMORKI, ROZMIAR_KOMORKI);
+                        
+                        double startX = x * ROZMIAR_KOMORKI;
+                        double startY = y * ROZMIAR_KOMORKI;
+                        
+                        // Punkty trójkąta
+                        double[] xPoints = {startX + 2, startX + ROZMIAR_KOMORKI -2, startX + ROZMIAR_KOMORKI/2};
+                        
+                        double[] yPoints = {startY + 2, startY +2, startY + ROZMIAR_KOMORKI};
+                        
+                        gc.fillPolygon(xPoints, yPoints, 3);
                         
                         // Rysowanie paska głodu dla rekina
-                        double poziomGlodu = organizmy[x][y].getGlod() / 100.0; // Rekin ma max 100 głodu
+                        double poziomGlodu = organizmy[x][y].getGlod() / 100.0;
                         rysujPasekGlodu(gc, x, y, poziomGlodu);
-                        
                     } else if (organizmy[x][y] instanceof Ryba) {
                         Ryba ryba = (Ryba) organizmy[x][y];
                         switch (ryba.getKolor()) {
                             case "niebieski" -> gc.setFill(Color.BLUE);
-                            case "żółty" -> gc.setFill(Color.YELLOW);
+                            case "zolty" -> gc.setFill(Color.GOLDENROD);
                             case "czerwony" -> gc.setFill(Color.RED);
-                            default -> gc.setFill(Color.PURPLE);
+                            case "fiolet" -> gc.setFill(Color.PURPLE);
                         }
-                        gc.fillOval(x * ROZMIAR_KOMORKI + 2, y * ROZMIAR_KOMORKI + 2,
-                                ROZMIAR_KOMORKI - 4, ROZMIAR_KOMORKI - 4);
+                        gc.fillOval(x * ROZMIAR_KOMORKI + 5, y * ROZMIAR_KOMORKI + 5,
+                                ROZMIAR_KOMORKI - 10, ROZMIAR_KOMORKI - 10);
                         
                         // Rysowanie paska głodu dla ryby
                         double poziomGlodu = ryba.getGlod() / 20.0; // Ryba ma max 20 głodu

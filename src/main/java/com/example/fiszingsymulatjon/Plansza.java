@@ -109,6 +109,7 @@ public class Plansza {
                                         // Tworzymy nową rybę na wolnym miejscu
                                         Ryba potomstwo = ryba.stworzPotomstwo(noweX, noweY);
                                         siatka[noweX][noweY] = potomstwo;
+                                        System.out.printf("Potomstwo powstało :o\n");
                                         break;
                                     }
                                 }
@@ -117,6 +118,7 @@ public class Plansza {
                         
                         // Sprawdzamy czy ryba nie umarła z głodu
                         if (((Ryba) organizm).czyMartwa()) {
+                            System.out.printf("Ryba umarła z głodu :(\n");
                             continue; // Pomijamy dodawanie martwej ryby do nowej pozycji
                         }
                     }
@@ -125,6 +127,12 @@ public class Plansza {
                     if (organizm instanceof Rekin && ((Rekin) organizm).isCzyPoluje()) {
                         if (siatka[nowaX][nowaY] instanceof Ryba) {
                             boolean czyMoznaZjesc = true;
+                            Ryba ryba = (Ryba) siatka[nowaX][nowaY];
+                            Rekin rekin = (Rekin) organizm;
+                            
+                            // Obliczamy szansę na zjedzenie ryby
+                            double wspolczynnik = (ryba.getSilaUcieczki() + rekin.getIloscZebow() * 2) / 2.0;
+                            double szansaZjedzenia = wspolczynnik / 2.0;
                             
                             // Sprawdzamy czy ryba jest w jaskini
                             if (siatkaSchronien[nowaX][nowaY] instanceof Jaskinia) {
@@ -132,11 +140,24 @@ public class Plansza {
                             } 
                             // Sprawdzamy czy ryba jest w trawie
                             else if (siatkaSchronien[nowaX][nowaY] instanceof Trawa) {
-                                czyMoznaZjesc = Math.random() < 0.33;
+
+                                szansaZjedzenia *= 0.33; // zmniejszamy szansę o 67% w trawie
+                                czyMoznaZjesc = Math.random()*100 < szansaZjedzenia;
+                                if(!czyMoznaZjesc){
+                                    System.out.printf("Ryba unikneła smierci :)" + "\n");
+                                }
+                            } else {
+
+                                czyMoznaZjesc = Math.random()*100 < szansaZjedzenia;
+
+                                if(!czyMoznaZjesc){
+                                    System.out.printf("Ryba unikneła smierci :)"+"\n" );
+                                }
                             }
                             
                             if (czyMoznaZjesc) {
-                                ((Rekin) organizm).zjedzRybe();
+                                System.out.printf("Ryba została zjedzona :(" + "\n");
+                                rekin.zjedzRybe();
                                 siatka[nowaX][nowaY] = null;
                                 siatka[nowaX][nowaY] = organizm;
                                 continue;
@@ -151,6 +172,7 @@ public class Plansza {
                     // Sprawdzamy czy rekin nie umarł z głodu
                     if (organizm instanceof Rekin) {
                         if (((Rekin) organizm).czyMartwy()) {
+                            System.out.printf("Rekin umarł z głodu :}\n");
                             continue; // Pomijamy dodawanie martwego rekina do nowej pozycji
                         }
                     }
