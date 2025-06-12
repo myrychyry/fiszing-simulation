@@ -46,7 +46,7 @@ public class Rekin extends Organizm {
             case 3 -> { // dół-prawo
                 setY(getY() + 1);
                 setX(getX() + 1);
-            }
+    }
             case 4 -> { // dół
                 setY(getY() + 1);
             }
@@ -69,7 +69,7 @@ public class Rekin extends Organizm {
         if (czyMartwy()) return;
         przemieszczaj();
         licznikDni++;
-        
+
         // Co 5 dni zmniejszamy głód o 2
         if (licznikDni >= 5) {
             setGlod(Math.max(0, getGlod() - 2));
@@ -86,7 +86,7 @@ public class Rekin extends Organizm {
 
     private void aktualizujStatusPolowania() {
         setCzyPoluje(getGlod() < PROG_POLOWANIA);
-    }
+        }
 
 
     // Gettery i settery

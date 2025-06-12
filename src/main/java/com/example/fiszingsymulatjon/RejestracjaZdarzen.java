@@ -4,12 +4,20 @@ import java.io.*;
 import java.nio.file.*;
 
 public class RejestracjaZdarzen {
-    private static final String NAZWA_PLIKU = "dane_symulacji.txt";
+    private static String nazwaPliku = "dane_symulacji.txt";
+
+    // Dodajemy metodę do zmiany ścieżki pliku (dla testów)
+    public static void ustawPlik(String nazwa) {
+        nazwaPliku = nazwa;
+    }
 
     public static void inicjalizujPlik() {
         try {
-            // Tworzymy nowy plik (lub nadpisujemy istniejący)
-            Files.writeString(Path.of(NAZWA_PLIKU), "");
+            Path sciezka = Path.of(nazwaPliku);
+            if (!Files.exists(sciezka)) {
+                Files.createFile(sciezka);
+            }
+            Files.writeString(sciezka, "");
         } catch (IOException e) {
             System.err.println("Błąd podczas tworzenia pliku: " + e.getMessage());
         }
@@ -17,9 +25,14 @@ public class RejestracjaZdarzen {
 
     public static void zapiszZdarzenie(int dzien, String zdarzenie) {
         try {
+            Path sciezka = Path.of(nazwaPliku);
+            if (!Files.exists(sciezka)) {
+                Files.createFile(sciezka);
+            }
             Files.writeString(
-                    Path.of(NAZWA_PLIKU),
+                    sciezka,
                     String.format("Dzień %d: %s%n", dzien, zdarzenie),
+                    StandardOpenOption.CREATE,
                     StandardOpenOption.APPEND
             );
         } catch (IOException e) {
