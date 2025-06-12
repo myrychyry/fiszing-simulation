@@ -252,6 +252,11 @@ public class SymulacjaOceanu extends Application {
                     if (organizmy[x][y] instanceof Rekin) {
                         gc.setFill(Color.GRAY);
                         gc.fillOval(x * ROZMIAR_KOMORKI, y * ROZMIAR_KOMORKI, ROZMIAR_KOMORKI, ROZMIAR_KOMORKI);
+                        
+                        // Rysowanie paska głodu dla rekina
+                        double poziomGlodu = organizmy[x][y].getGlod() / 100.0; // Rekin ma max 100 głodu
+                        rysujPasekGlodu(gc, x, y, poziomGlodu);
+                        
                     } else if (organizmy[x][y] instanceof Ryba) {
                         Ryba ryba = (Ryba) organizmy[x][y];
                         switch (ryba.getKolor()) {
@@ -262,10 +267,32 @@ public class SymulacjaOceanu extends Application {
                         }
                         gc.fillOval(x * ROZMIAR_KOMORKI + 2, y * ROZMIAR_KOMORKI + 2,
                                 ROZMIAR_KOMORKI - 4, ROZMIAR_KOMORKI - 4);
+                        
+                        // Rysowanie paska głodu dla ryby
+                        double poziomGlodu = ryba.getGlod() / 20.0; // Ryba ma max 20 głodu
+                        rysujPasekGlodu(gc, x, y, poziomGlodu);
                     }
                 }
             }
         }
+    }
+
+    private void rysujPasekGlodu(GraphicsContext gc, int x, int y, double poziomGlodu) {
+        int szerokoscPaska = (int)(ROZMIAR_KOMORKI * 0.7); // 80% szerokości komórki
+        int wysokoscPaska = 5; // 4 piksele wysokości
+        int margines = (ROZMIAR_KOMORKI - szerokoscPaska) / 2;
+        
+        // Pozycja paska (na górze organizmu)
+        int pasekX = x * ROZMIAR_KOMORKI + margines;
+        int pasekY = y * ROZMIAR_KOMORKI + (int)(ROZMIAR_KOMORKI * 0.35);
+        
+        // Rysowanie tła paska (szary)
+        gc.setFill(Color.INDIANRED);
+        gc.fillRect(pasekX, pasekY, szerokoscPaska, wysokoscPaska);
+        
+        // Rysowanie aktualnego poziomu głodu (czarny)
+        gc.setFill(Color.LIGHTGREEN);
+        gc.fillRect(pasekX, pasekY, szerokoscPaska * poziomGlodu, wysokoscPaska);
     }
 
     private void aktualizujWyswietlanieDnia() {

@@ -3,14 +3,44 @@ package com.example.fiszingsymulatjon;
 public class Ryba extends Organizm {
     private int silaUcieczki;
     private String kolor;
-    private static final double SZANSA_ROZMNOZENIA = 0.049;
+    private static final double SZANSA_ROZMNOZENIA = 0.06;
+    private static final int MAX_SILA_UCIECZKI = 100;
+    private static final int MAX_WIEK = 100;
+    private static final double WAGA_GLODU = 0.6;
+    private static final double WAGA_WIEKU = 0.4;
 
     public Ryba(int x, int y, String kolor, int glod, int silaUcieczki) {
         super(x, y);
         this.kolor = kolor;
         this.setGlod(glod);
-        this.silaUcieczki = silaUcieczki;
+        aktualizujSileUcieczki();
     }
+
+    private void aktualizujSileUcieczki() {
+        // Składowa głodu (im większy głód, tym większa siła ucieczki)
+        double skladowaGlodu = (getGlod() / 20.0) * WAGA_GLODU * MAX_SILA_UCIECZKI;
+        
+        // Składowa wieku (im mniejszy wiek, tym większa siła ucieczki)
+        double skladowaWieku = ((MAX_WIEK - getWiek()) / (double) MAX_WIEK) * WAGA_WIEKU * MAX_SILA_UCIECZKI;
+        
+        // Całkowita siła ucieczki
+        this.silaUcieczki = (int) Math.min(MAX_SILA_UCIECZKI, Math.max(0, skladowaGlodu + skladowaWieku));
+    }
+
+    @Override
+    public void zyj() {
+        przemieszczaj();
+        // Zmniejszamy głód co 5 dni
+        if (getWiek() % 5 == 0) {
+            setGlod(getGlod() - 1);
+        }
+        // Zwiększamy wiek
+        setWiek(getWiek() + 1);
+        //System.out.printf("wiek sie zwiekrzyl: " + getWiek() + "\n");
+        // Aktualizujemy siłę ucieczki po zmianie wieku i głodu
+        aktualizujSileUcieczki();
+    }
+
     public boolean sprobujRozmnozycSie() {
         return Math.random() < SZANSA_ROZMNOZENIA;
     }
@@ -19,11 +49,11 @@ public class Ryba extends Organizm {
         return new Ryba(x, y, this.kolor, 20, 50);
     }
 
-
+        
     public void szukajPlanktonu() {
         // Implementacja
     }
-
+        
     public void unikajDrapieznikow() {
         // Implementacja
     }
@@ -68,16 +98,6 @@ public class Ryba extends Organizm {
         }
     }
 
-    @Override
-    public void zyj() {
-        przemieszczaj();
-        // Zmniejszamy głód co 5 dni
-        if (getWiek() % 5 == 0) {
-            setGlod(getGlod() - 1);
-        }
-        // Zwiększamy wiek
-        setWiek(getWiek() + 1);
-    }
     public void zjedzPlankton() {
         setGlod(Math.min(20, getGlod() + 5)); // Dodajemy 5 punktów głodu, ale nie więcej niż 20
     }
