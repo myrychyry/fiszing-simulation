@@ -9,8 +9,15 @@ target/
 .idea/compiler.xml
 .idea/libraries/
 *.iws
-*.iml
 *.ipr
+/target/
+*.class
+*.jar
+*.war
+*.ear
+*.logs
+*.iml
+.idea/
 
 ### Eclipse ###
 .apt_generated
