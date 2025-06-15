@@ -16,23 +16,57 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * Główna klasa aplikacji symulującej ekosystem oceaniczny.
+ * Zarządza interfejsem graficznym i logiką symulacji, umożliwiając obserwację
+ * interakcji między różnymi organizmami morskimi.
+ *
+ * @author Mateusz Gawronkiewicz/Michał Charlikowski
+ * @version 1.0
+ */
 public class SymulacjaOceanu extends Application {
+    /** Główne okno aplikacji */
     private Stage oknoGlowne;
+    
+    /** Aktualny dzień symulacji */
     private static int aktualnyDzien = 0;
+    
+    /** Flaga określająca czy symulacja jest aktualnie uruchomiona */
     private boolean czyDziala = false;
+    
+    /** Obiekt kontrolujący upływ czasu w symulacji */
     private Timeline czasomierz;
+    
+    /** Etykieta wyświetlająca aktualny dzień symulacji */
     private final Label etykietaDnia = new Label("Dzień: 0");
+    
+    /** Główna plansza symulacji */
     private Plansza plansza;
+    
+    /** Obszar rysowania symulacji */
     private Canvas plotno;
-    private static final int ROZMIAR_KOMORKI = 60;
-    private int rozmiarSiatki;         //
+    
+    /** Rozmiar pojedynczej komórki na planszy w pikselach */
+    private static final int ROZMIAR_KOMORKI = 40;
+    
+    /** Rozmiar siatki symulacji (większy z wymiarów planszy) */
+    private int rozmiarSiatki;
 
+    /**
+     * Inicjalizuje aplikację i wyświetla okno konfiguracji.
+     *
+     * @param stage Główne okno aplikacji
+     */
     @Override
     public void start(Stage stage) {
         this.oknoGlowne = stage;
         pokazOknoKonfiguracji();
     }
 
+    /**
+     * Wyświetla okno konfiguracji symulacji umożliwiające
+     * ustawienie parametrów początkowych.
+     */
     private void pokazOknoKonfiguracji() {
         Stage oknoKonfiguracji = new Stage();
         oknoKonfiguracji.setTitle("Konfiguracja symulacji");
@@ -104,6 +138,14 @@ public class SymulacjaOceanu extends Application {
         oknoKonfiguracji.show();
     }
 
+    /**
+     * Rozpoczyna symulację z zadanymi parametrami początkowymi.
+     *
+     * @param szerokosc szerokość planszy
+     * @param wysokosc wysokość planszy
+     * @param liczbaRyb początkowa liczba ryb
+     * @param liczbaRekinow początkowa liczba rekinów
+     */
     private void rozpocznijSymulacje(int szerokosc, int wysokosc, int liczbaRyb, int liczbaRekinow) {
         RejestracjaZdarzen.inicjalizujPlik();
 
@@ -135,6 +177,12 @@ public class SymulacjaOceanu extends Application {
         rysujObiekty(plotno.getGraphicsContext2D());
     }
 
+    /**
+     * Tworzy panel kontrolny symulacji zawierający przyciski i pola wprowadzania.
+     *
+     * @param gc kontekst graficzny do rysowania
+     * @return panel kontrolny jako obiekt HBox
+     */
     private HBox stworzMenuKontroli(GraphicsContext gc) {
         Button przyciskNastepnegoDnia = new Button("Kolejny dzień");
         TextField poleLiczbyDni = new TextField();
@@ -182,6 +230,12 @@ public class SymulacjaOceanu extends Application {
         return menu;
     }
 
+    /**
+     * Przechodzi do następnego dnia symulacji, aktualizując stan wszystkich organizmów
+     * i odświeżając widok.
+     *
+     * @param gc kontekst graficzny do rysowania
+     */
     private void nastepnyDzien(GraphicsContext gc) {
         aktualnyDzien++;
         aktualizujWyswietlanieDnia();
@@ -209,6 +263,12 @@ public class SymulacjaOceanu extends Application {
         rysujObiekty(gc);
     }
 
+    /**
+     * Inicjalizuje obiekty na planszy, w tym ryby, rekiny, plankton i schronienia.
+     *
+     * @param liczbaRyb liczba ryb do utworzenia
+     * @param liczbaRekinow liczba rekinów do utworzenia
+     */
     private void inicjalizujObiekty(int liczbaRyb, int liczbaRekinow) {
         String[] kolory = {"niebieski", "zolty", "czerwony", "fiolet"};
         plansza.dodajObiekty(liczbaRyb, () -> {
@@ -231,6 +291,11 @@ public class SymulacjaOceanu extends Application {
         }
     }
 
+    /**
+     * Rysuje siatkę planszy z tłem.
+     *
+     * @param gc kontekst graficzny do rysowania
+     */
     private void rysujSiatke(GraphicsContext gc) {
         gc.setFill(Color.LIGHTBLUE);
         gc.fillRect(0, 0, plotno.getWidth(), plotno.getHeight());
@@ -243,6 +308,11 @@ public class SymulacjaOceanu extends Application {
         }
     }
 
+    /**
+     * Rysuje wszystkie obiekty na planszy (schronienia, plankton, organizmy).
+     *
+     * @param gc kontekst graficzny do rysowania
+     */
     private void rysujObiekty(GraphicsContext gc) {
         // Rysowanie schronień
         Schronienie[][] schronienia = plansza.getSiatkaSchronien();
@@ -312,10 +382,23 @@ public class SymulacjaOceanu extends Application {
         }
     }
 
+    /**
+     * Zwraca aktualny dzień symulacji.
+     *
+     * @return numer aktualnego dnia
+     */
     public static int getAktualnyDzien() {
         return aktualnyDzien;
     }
 
+    /**
+     * Rysuje pasek reprezentujący poziom głodu organizmu.
+     *
+     * @param gc kontekst graficzny do rysowania
+     * @param x pozycja X organizmu na planszy
+     * @param y pozycja Y organizmu na planszy
+     * @param poziomGlodu znormalizowany poziom głodu (0.0 - 1.0)
+     */
     private void rysujPasekGlodu(GraphicsContext gc, int x, int y, double poziomGlodu) {
         int szerokoscPaska = (int) (ROZMIAR_KOMORKI * 0.7);
         int wysokoscPaska = 5;
@@ -334,11 +417,19 @@ public class SymulacjaOceanu extends Application {
         gc.fillRect(pasekX, pasekY, szerokoscPaska * poziomGlodu, wysokoscPaska);
     }
 
+    /**
+     * Aktualizuje wyświetlane informacje o aktualnym dniu symulacji.
+     */
     private void aktualizujWyswietlanieDnia() {
         etykietaDnia.setText("Dzień: " + aktualnyDzien);
         oknoGlowne.setTitle("Symulacja Oceanu - Dzień " + aktualnyDzien);
     }
 
+    /**
+     * Punkt wejścia do aplikacji.
+     *
+     * @param args argumenty wiersza poleceń (nieużywane)
+     */
     public static void main(String[] args) {
         launch();
     }

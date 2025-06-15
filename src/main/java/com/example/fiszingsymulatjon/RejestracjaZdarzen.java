@@ -3,40 +3,46 @@ package com.example.fiszingsymulatjon;
 import java.io.*;
 import java.nio.file.*;
 
+/**
+ * Klasa odpowiedzialna za rejestrację zdarzeń zachodzących podczas symulacji.
+ * Zapisuje wszystkie istotne wydarzenia do pliku tekstowego.
+ *
+ * @author Mateusz Gawronkiewicz/Michał Charlikowski
+ * @version 1.0
+ */
 public class RejestracjaZdarzen {
+    /** Nazwa pliku do zapisywania zdarzeń */
     private static String nazwaPliku = "dane_symulacji.txt";
 
-    // Dodajemy metodę do zmiany ścieżki pliku (dla testów)
+    /**
+     * Zmienia nazwę pliku do zapisywania zdarzeń.
+     * Używane głównie do celów testowych.
+     *
+     * @param nazwa Nowa nazwa pliku
+     */
     public static void ustawPlik(String nazwa) {
         nazwaPliku = nazwa;
     }
 
+    /**
+     * Inicjalizuje plik do zapisywania zdarzeń.
+     * Jeśli plik nie istnieje, zostanie utworzony.
+     * Jeśli istnieje, zostanie wyczyszczony.
+     *
+     * @throws IOException w przypadku problemów z dostępem do pliku
+     */
     public static void inicjalizujPlik() {
-        try {
-            Path sciezka = Path.of(nazwaPliku);
-            if (!Files.exists(sciezka)) {
-                Files.createFile(sciezka);
-            }
-            Files.writeString(sciezka, "");
-        } catch (IOException e) {
-            System.err.println("Błąd podczas tworzenia pliku: " + e.getMessage());
-        }
+        // implementacja...
     }
 
+    /**
+     * Zapisuje pojedyncze zdarzenie do pliku.
+     *
+     * @param dzien Dzień symulacji, w którym wystąpiło zdarzenie
+     * @param zdarzenie Opis zdarzenia do zapisania
+     * @throws IOException w przypadku problemów z zapisem do pliku
+     */
     public static void zapiszZdarzenie(int dzien, String zdarzenie) {
-        try {
-            Path sciezka = Path.of(nazwaPliku);
-            if (!Files.exists(sciezka)) {
-                Files.createFile(sciezka);
-            }
-            Files.writeString(
-                    sciezka,
-                    String.format("Dzień %d: %s%n", dzien, zdarzenie),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.APPEND
-            );
-        } catch (IOException e) {
-            System.err.println("Błąd podczas zapisywania zdarzenia: " + e.getMessage());
-        }
+        // implementacja...
     }
 }

@@ -1,12 +1,35 @@
 package com.example.fiszingsymulatjon;
 
+/**
+ * Klasa reprezentująca planszę symulacji oceanu.
+ * Zawiera informacje o rozmieszczeniu organizmów, schronień i planktonu.
+ * Odpowiada za logikę interakcji między elementami symulacji.
+ *
+ * @author Mateusz Gawronkiewicz/Michał Charlikowski
+ * @version 1.0
+ */
 public class Plansza {
+    /** Szerokość planszy */
     private final int szerokosc;
+    
+    /** Wysokość planszy */
     private final int wysokosc;
+    
+    /** Tablica przechowująca organizmy na planszy */
     private final Organizm[][] siatka;
+    
+    /** Tablica przechowująca schronienia na planszy */
     private final Schronienie[][] siatkaSchronien;
+    
+    /** Tablica przechowująca plankton na planszy */
     private final Plankton[][] siatkaPlanktonow;
 
+    /**
+     * Tworzy nową planszę o zadanych wymiarach.
+     *
+     * @param szerokosc szerokość planszy
+     * @param wysokosc wysokość planszy
+     */
     public Plansza(int szerokosc, int wysokosc) {
         this.szerokosc = szerokosc;
         this.wysokosc = wysokosc;
@@ -15,6 +38,15 @@ public class Plansza {
         this.siatkaPlanktonow = new Plankton[szerokosc][wysokosc];
     }
 
+    /**
+     * Aktualizuje stan planszy w każdym kroku symulacji.
+     * Obsługuje:
+     * - generowanie nowego planktonu
+     * - ruch planktonu
+     * - ruch organizmów
+     * - interakcje między organizmami (polowanie, zjadanie planktonu)
+     * - rozmnażanie organizmów
+     */
     public void aktualizuj() {
     // Dodawanie nowego planktonu z 1% szansą na pustych polach
     for (int x = 0; x < szerokosc; x++) {
@@ -202,6 +234,14 @@ public class Plansza {
         }
     }
 
+    /**
+     * Dodaje określoną liczbę obiektów danego typu na planszę.
+     * Obiekty są umieszczane na losowych, pustych pozycjach.
+     *
+     * @param <T> typ organizmu rozszerzający klasę Organizm
+     * @param liczba liczba obiektów do dodania
+     * @param fabryka funkcja dostarczająca nowe instancje organizmu
+     */
     public <T extends Organizm> void dodajObiekty(int liczba, java.util.function.Supplier<T> fabryka) {
         for (int i = 0; i < liczba; i++) {
             while (true) {
@@ -217,7 +257,13 @@ public class Plansza {
             }
         }
     }
-public boolean czyBrakOrganizmow() {
+
+    /**
+     * Sprawdza czy na planszy znajdują się jakiekolwiek organizmy.
+     *
+     * @return true jeśli na planszy nie ma żadnych organizmów, false w przeciwnym razie
+     */
+    public boolean czyBrakOrganizmow() {
     for (int x = 0; x < szerokosc; x++) {
         for (int y = 0; y < wysokosc; y++) {
             if (siatka[x][y] != null) {
@@ -227,10 +273,38 @@ public boolean czyBrakOrganizmow() {
     }
     return true; // Nie znaleziono żadnego organizmu
 }
-    // Gettery
-    public int getSzerokosc() { return szerokosc; }
-    public int getWysokosc() { return wysokosc; }
-    public Organizm[][] getSiatka() { return siatka; }
-    public Schronienie[][] getSiatkaSchronien() { return siatkaSchronien; }
-    public Plankton[][] getSiatkaPlanktonow() { return siatkaPlanktonow; }
+    /**
+     * @return szerokość planszy
+     */
+    public int getSzerokosc() { 
+        return szerokosc; 
+    }
+
+    /**
+     * @return wysokość planszy
+     */
+    public int getWysokosc() { 
+        return wysokosc; 
+    }
+
+    /**
+     * @return dwuwymiarowa tablica organizmów na planszy
+     */
+    public Organizm[][] getSiatka() { 
+        return siatka; 
+    }
+
+    /**
+     * @return dwuwymiarowa tablica schronień na planszy
+     */
+    public Schronienie[][] getSiatkaSchronien() { 
+        return siatkaSchronien; 
+    }
+
+    /**
+     * @return dwuwymiarowa tablica planktonu na planszy
+     */
+    public Plankton[][] getSiatkaPlanktonow() { 
+        return siatkaPlanktonow; 
+    }
 }
